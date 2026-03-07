@@ -1,0 +1,28 @@
+[2025-11-26 14:41:42][INFO] Request: GET /
+[2025-11-26 14:42:29][INFO] Request: POST /api/auth/login
+[2025-11-26 14:42:29][ERROR] Excepción no capturada: Call to private method Logger::write() from scope AuthController
+[2025-11-26 14:44:06][INFO] Request: POST /api/auth/login
+[2025-11-26 14:44:06][ERROR] PDO ERROR en login: SQLSTATE[42S22]: [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'role_id'.
+[2025-11-26 14:51:07][INFO] Request: POST /api/auth/login
+[2025-11-26 14:51:07][ERROR] Login fallido para email: olman1000@gmail.com
+[2025-11-26 14:52:54][INFO] Request: POST /api/auth/login
+[2025-11-26 14:52:55][ERROR] Login fallido para email: olman1000@gmail.com
+[2025-11-26 14:54:07][INFO] Request: POST /api/auth/login
+[2025-11-26 14:54:07][ERROR] PHP Error: Undefined array key "role_name" en C:\Users\Omonge\Documents\Proyectos\videos\backend\src\Controllers\AuthController.php:64
+[2025-11-26 14:56:20][INFO] Request: POST /api/auth/login
+[2025-12-01 06:54:06][INFO] Request: OPTIONS /api/auth/login
+[2025-12-01 06:54:07][INFO] Request: POST /api/auth/login
+[2025-12-01 07:03:08][INFO] Request: OPTIONS /api/auth/login
+[2025-12-01 07:03:08][INFO] Request: POST /api/auth/login
+[2026-01-16 21:46:38][INFO] Request: OPTIONS /api/auth/login
+[2026-01-16 21:46:38][INFO] Request: POST /api/auth/login
+[2026-01-16 21:46:38][ERROR] Login fallido para email: olman1000@gmail.com
+[2026-01-16 21:47:07][INFO] Request: OPTIONS /api/auth/login
+[2026-01-16 21:47:07][INFO] Request: POST /api/auth/login
+[2026-01-16 21:47:35][INFO] Request: OPTIONS /api/auth/login
+[2026-01-16 21:47:35][INFO] Request: POST /api/auth/login
+[2026-01-16 21:47:35][ERROR] Login fallido para email: olman1000@gmail.com
+[2026-01-16 21:47:46][INFO] Request: OPTIONS /api/auth/login
+[2026-01-16 21:47:46][INFO] Request: POST /api/auth/login
+[2026-01-20 13:00:51][INFO] Request: OPTIONS /api/auth/login
+[2026-01-20 13:00:52][INFO] Request: POST /api/auth/login
