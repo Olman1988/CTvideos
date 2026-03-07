@@ -14,7 +14,7 @@ export default function Profile() {
           
           {/* SIDEBAR */}
           <aside className="profile-sidebar" aria-label="Resumen del perfil">
-            <article className="profile-summary">
+            <article className="profile-summary"> 
               <div className="profile-summary-cover">
                 <img 
                   className="profile-summary-cover-image" 
