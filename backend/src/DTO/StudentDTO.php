@@ -55,8 +55,8 @@ final class StudentDTO
             $this->centrosEducativos = array_map('intval', $input['centros_educativos']);
         }
 
-        // 🔹 Si requiere usuario, inicializamos el UserDTO
         if ($this->usuarioRequerido && isset($input['user']) && is_array($input['user'])) {
+			$input['user']["nombre"] = $input['nombre']." ".$input['primer_apellido']." ". $input['segundo_apellido'];
             $this->user = new UserDTO($input['user']);
         }
     }

@@ -1,7 +1,7 @@
 <?php
 
 define('ENV', 'development'); // cambiar a 'production' en servidor
-
+//pruebas
 if (ENV === 'development') {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);

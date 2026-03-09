@@ -1,52 +1,126 @@
 <?php
 
+
 class UsersController
 {
     private PDO $db;
-    private UserService $service;
 
     public function __construct()
     {
         $this->db = Database::getConnection();
-        $this->service = new UserService();
     }
-    public function createUser(): void
-    {
-        try {
-            $data = Request::json();
+        public function createUser(): void
+{
+    try {
+        $data = Request::json();
 
-            // 🔹 Creamos el DTO
-            $userDTO = new UserDTO($data);
-            $userDTO->validate();
-
-            
-            // 🔹 Creamos usuario mediante el Service
-            $usuarioId = $this->service->create($userDTO);
-
-            // 🔹 Sincronizamos roles si vienen
-            if (!empty($userDTO->roles)) {
-                $userRoleService = new UserRoleService($this->db);
-                $userRoleService->syncRoles($usuarioId, $userDTO->roles);
-            }
-
-            Response::json([
-                'message' => 'Usuario creado correctamente',
-                'usuario_id' => $usuarioId
-            ], 201);
-
-        } catch (InvalidArgumentException | Exception $e) {
-            Response::json([
-                'error' => $e->getMessage()
-            ], 400);
-
-        } catch (Throwable $e) {
-            Logger::error("Error al crear usuario: ".$e->getMessage());
-
-            Response::json([
-                'error' => 'Error interno del servidor'
-            ], 500);
+        // 🔹 Validaciones básicas
+        if (
+            empty($data['nombre']) ||
+            empty($data['correo']) ||
+            empty($data['password']) ||
+            empty($data['confirmpassword'])
+        ) {
+            Logger::warning("Creación usuario fallida | Datos incompletos");
+            Response::json(['error' => 'Datos incompletos'], 400);
+            return;
         }
+
+        if ($data['password'] !== $data['confirmpassword']) {
+            Logger::warning("Creación usuario fallida | Contraseñas no coinciden");
+            Response::json(['error' => 'Las contraseñas no coinciden'], 400);
+            return;
+        }
+
+        // 🔹 Iniciar transacción
+        $this->db->beginTransaction();
+
+        // 🔹 Validar correo duplicado
+        $stmtCheck = $this->db->prepare("
+            SELECT id 
+            FROM usuarios 
+            WHERE correo = :correo
+        ");
+        $stmtCheck->execute([
+            ':correo' => $data['correo']
+        ]);
+
+        if ($stmtCheck->fetch()) {
+            $this->db->rollBack();
+            Logger::warning(
+                "Creación usuario fallida | Correo duplicado | {$data['correo']}"
+            );
+            Response::json(['error' => 'El correo ya está registrado'], 409);
+            return;
+        }
+
+        // 🔹 Insertar usuario (SQL Server compatible)
+        $uuid = Uuid::v4();
+        $passwordHash = password_hash($data['password'], PASSWORD_BCRYPT);
+
+        $stmtUser = $this->db->prepare("
+            INSERT INTO usuarios (uuid, nombre, correo, password, estado_id)
+            OUTPUT INSERTED.id
+            VALUES (:uuid, :nombre, :correo, :password, :estado_id)
+        ");
+
+        $stmtUser->execute([
+            ':uuid'      => $uuid,
+            ':nombre'    => $data['nombre'],
+            ':correo'    => $data['correo'],
+            ':password'  => $passwordHash,
+            ':estado_id' => 1
+        ]);
+
+        $usuarioId = (int)$stmtUser->fetchColumn();
+
+        // 🔹 Sincronizar roles
+        if (!empty($data['roles']) && is_array($data['roles'])) {
+            $userRoleService = new UserRoleService();
+            $userRoleService->syncRoles($usuarioId, $data['roles']);
+        }
+
+        // 🔹 Commit final
+        $this->db->commit();
+
+        Response::json([
+            'message' => 'Usuario creado correctamente',
+            'usuario_id' => $usuarioId
+        ], 201);
+
+    } catch (RuntimeException $e) {
+
+        if ($this->db->inTransaction()) {
+            $this->db->rollBack();
+        }
+
+        Logger::warning(
+            "Creación usuario fallida | " .
+            "Mensaje={$e->getMessage()} | Código={$e->getCode()}"
+        );
+
+        Response::json([
+            'error' => $e->getMessage()
+        ], $e->getCode() ?: 400);
+
+    } catch (Throwable $e) {
+
+        if ($this->db->inTransaction()) {
+            $this->db->rollBack();
+        }
+
+        Logger::error(
+            "Error al crear usuario | " .
+            "Mensaje={$e->getMessage()} | " .
+            "Archivo={$e->getFile()} | " .
+            "Línea={$e->getLine()}"
+        );
+
+        Response::json([
+            'error' => 'Error interno del servidor'
+        ], 500);
     }
+}
 
     /**
      * GET /api/usuarios/all
@@ -80,7 +154,9 @@ GROUP BY
 
         } catch (Throwable $e) {
 
-            Logger::error("Error al listar usuarios".$e->getMessage());
+            Logger::error("Error al listar usuarios", [
+                "error" => $e->getMessage()
+            ]);
 
             Response::json([
                 "error" => "Error interno del servidor"

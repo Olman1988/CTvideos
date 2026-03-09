@@ -5,12 +5,14 @@ class ProfilesController
     private PDO $db;
     private ProfileService $service;
     private UserService $userService;
+	private UserRoleService $userRoleService;
 
     public function __construct()
     {
         $this->db = Database::getConnection();
         $this->service = new ProfileService();
         $this->userService = new UserService();
+		$this->userRoleService = new UserRoleService();
     }
    public function createStudent(): void
     {
@@ -27,14 +29,17 @@ class ProfilesController
             // 🔹 Crear usuario si es requerido
             if ($dto->usuarioRequerido && $dto->user instanceof UserDTO) {
                 $dto->user->nombre= $dto->nombre." ".$dto->primerApellido." ".$dto->segundoApellido;
-                Logger::info("user". json_encode($dto->user));
                 // Si no se pasó contraseña, asignar default
                 if (empty($dto->user->password)) {
                     $dto->user->password = "Admin+1234";
                     $dto->user->confirmpassword = "Admin+1234";
                 }
 
-                $this->userService->create($dto->user);
+                $usuarioId = $this->userService->create($dto->user);
+				if(!empty($usuarioId)){
+					$data['roles'] = [3];
+          		   $this->userRoleService->syncRoles($usuarioId, $data['roles']);
+				}
             }
 
             Response::json([

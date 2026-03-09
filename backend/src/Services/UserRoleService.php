@@ -4,9 +4,9 @@ class UserRoleService
 {
     private PDO $db;
 
-    public function __construct(PDO $db)
+    public function __construct()
     {
-        $this->db = $db;
+        $this->db = Database::getConnection();
     }
 
     public function syncRoles(int $usuarioId, array $roles): void
