@@ -82,7 +82,7 @@ const BackgroundCreate = () => {
       });
 
       Swal.fire("Éxito", "Marco creado correctamente", "success");
-      navigate("/admin/mantenimientos/backgrounds");
+      navigate("/admin/mantenimientos/marcos");
 
     } catch (error) {
       Swal.fire("Error", "No se pudo crear el marco", "error");

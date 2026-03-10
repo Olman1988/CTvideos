@@ -10911,3 +10911,11 @@
           width: 100%;
         }
       }
+.profile-avatar-btn.is-selected {
+    border: 3px solid #7c3aed;
+    transform: scale(1.1);
+}
+.profile-avatar-btn.is-selected img {
+    box-shadow: 0 0 10px rgba(124,58,237,0.7);
+    border-radius: 50%;
+}

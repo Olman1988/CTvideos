@@ -69,3 +69,34 @@ button:focus-visible {
 #root {
   width: 100%;
 }
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  height: 60vh;
+}
+
+.loader-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 5px solid rgba(0,0,0,0.1);
+  border-top: 5px solid #7c3aed;
+  animation: loader-spin 0.8s linear infinite;
+}
+
+.loader-text {
+  font-size: 14px;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+@keyframes loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+

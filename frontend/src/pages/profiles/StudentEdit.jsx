@@ -24,8 +24,10 @@ const StudentEdit = () => {
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [centros, setCentros] = useState([]);
+  const [centros, setCenters] = useState([]);
   const [avatares, setAvatares] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [backgrounds, setBackgrounds] = useState([]);
 
   const [form, setForm] = useState({
     nombre: "",
@@ -35,24 +37,37 @@ const StudentEdit = () => {
     fecha_nacimiento: "",
     estado_id: 1,
     avatar_id: "",
-    centros_educativos: []
+    centros_educativos: [],
+    usuario_id: "",
+    marco_id:""
   });
 
   /* ===================== LOAD DATA ===================== */
   useEffect(() => {
-    fetchCentros();
+    fetchCenters();
     fetchAvatares();
     fetchStudent();
+    fetchUsers();
+    fetchBackgrounds();
   }, []);
 
-  const fetchCentros = async () => {
+  const fetchCenters = async () => {
     const res = await axiosInstance.get("/centers/active");
-    setCentros(res.data);
+    setCenters(res.data);
   };
+  const fetchUsers = async () => {
+  const res = await axiosInstance.get("/users/all");
+  setUsers(res.data);
+};
 
   const fetchAvatares = async () => {
     const res = await axiosInstance.get("/avatars/active");
     setAvatares(res.data);
+  };
+
+  const fetchBackgrounds = async () => {
+    const res = await axiosInstance.get("/backgrounds/active");
+    setBackgrounds(res.data);
   };
 
   const fetchStudent = async () => {
@@ -78,7 +93,9 @@ const StudentEdit = () => {
         fecha_nacimiento: res.data.birth_date ?? "",
         estado_id: Number(res.data.estado_id ?? 1),
         avatar_id: res.data.avatar_id ? Number(res.data.avatar_id) : "",
-        centros_educativos: educationalCenters.map((c) => Number(c.id)) // ✅ valores numéricos
+        centros_educativos: educationalCenters.map((c) => Number(c.id)), // ✅ valores numéricos
+        usuario_id: res.data.usuario_id ? Number(res.data.usuario_id) : "",
+        marco_id: res.data.marco_id ? Number(res.data.marco_id) : "",
       });
     } catch (error) {
       Swal.fire("Error", "No se pudo cargar el estudiante", "error");
@@ -90,6 +107,10 @@ const StudentEdit = () => {
 const centroOptions = centros.map((c) => ({
   value: Number(c.id),
   label: c.nombre,
+}));
+const userOptions = users.map((u) => ({
+  value: Number(u.id),
+  label: `${u.nombre} ${u.primer_apellido ?? ""}`,
 }));
   /* ===================== HANDLERS ===================== */
   const handleChange = (e) => {
@@ -200,6 +221,28 @@ const centroOptions = centros.map((c) => ({
             fullWidth
           />
             </Box>
+            <Box sx={{ width: { xs: "100%", md: "48%" } }}>
+  <FormControl fullWidth>
+  <InputLabel>Usuario</InputLabel>
+
+  <MUISelect
+  name="usuario_id"
+  value={form.usuario_id} // siempre un valor definido
+  onChange={handleChange}
+ 
+  label="Usuario"
+>
+  <MenuItem value="">
+    <em>Seleccione un usuario</em>
+  </MenuItem>
+  {users.map((user) => (
+    <MenuItem key={user.usuario_id} value={Number(user.usuario_id)}>
+      {user.nombre}
+    </MenuItem>
+  ))}
+</MUISelect>
+</FormControl>
+</Box>
           {/* Fecha nacimiento */}
           <Box sx={{ width: { xs: "100%", md: "48%" } }}>
           <TextField
@@ -285,6 +328,70 @@ const centroOptions = centros.map((c) => ({
               </Box>
 
               {!form.avatar_id && (
+                <Typography color="text.secondary" variant="caption" mt={1}>
+                  Debe seleccionar un avatar
+                </Typography>
+              )}
+            </Box>
+            {/* Marcos selector visual */}
+            <Box sx={{ width: { xs: "100%", md: "100%" } }}>
+              <Typography variant="subtitle1" mb={1}>
+                Seleccione un marco
+              </Typography>
+
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))",
+                  gap: 3,
+                  border: "1px solid #ccc",
+                  borderRadius: 1,
+                  p: 2,
+                }}
+              >
+                {backgrounds.map((background) => {
+                  const selected = Number(form.marco_id) === Number(background.id);
+
+                  return (
+                    <Box
+                      key={background.id}
+                      onClick={() =>
+                        setForm({ ...form, marco_id: Number(background.id) })
+                      }
+                      sx={{
+                        cursor: "pointer",
+                        textAlign: "center",
+                        borderRadius: 2,
+                        p: 1,
+                        border: selected ? "2px solid #1976d2" : "2px solid transparent",
+                        boxShadow: selected ? 3 : 0,
+                        transform: selected ? "scale(1.05)" : "scale(1)",
+                        transition: "all 0.2s ease",
+                        "&:hover": {
+                          boxShadow: 2,
+                          transform: "scale(1.05)",
+                        }, 
+                      }} 
+                    >
+                      <Box
+                        component="img"
+                        src={`${API_URL_IMG}${background.imagen}`}
+                        sx={{
+                          width: "100%",
+                          height: "auto",
+                          display: "block",
+                          mb: 1,
+                        }}
+                      />
+                      <Typography variant="caption">
+                        {background.nombre}
+                      </Typography>
+                    </Box>
+                  );
+                })}
+              </Box>
+
+              {!form.marco_id && (
                 <Typography color="text.secondary" variant="caption" mt={1}>
                   Debe seleccionar un avatar
                 </Typography>

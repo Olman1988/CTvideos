@@ -31,7 +31,7 @@ const navigate = useNavigate();
           return;
         }
     try {
-          const response = await axiosInstance.post("/auth/login", {
+          const response = await axiosInstance.post("/auth/login-user", {
         email: formData.email,
         password: formData.password,
       });
