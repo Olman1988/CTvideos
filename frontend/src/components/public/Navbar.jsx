@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
@@ -10,7 +11,7 @@ export default function Navbar() {
       </div>
 
       <div className="nav-links">
-        <a className="is-active" href="#">Inicio</a>
+         <Link className="is-active" to="/">Inicio</Link>
         <a href="#">Galeria</a>
         <a href="#">¿Quienes somos?</a>
         <a href="#">Retos y Trivias</a>
@@ -42,9 +43,9 @@ export default function Navbar() {
       </div>
 
       <div className="desktop-panel" aria-label="Menu escritorio">
-        <a href="#">Registrarme</a>
-        <a href="#">Login</a>
-        <a href="#">Conocer mas</a>
+        <Link to="/usuarios/registro">Registrarme</Link>
+        <Link to="/usuarios/login">Iniciar sesión</Link>
+        <Link to="/conocer-mas">Conocer más</Link>
       </div>
 
       <div className="mobile-panel" aria-label="Menu movil">

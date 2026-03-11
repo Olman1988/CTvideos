@@ -13,6 +13,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PrivateUserRoute from "./components/PrivateUserRoute";
 
+import UploadVideoWizard from "./pages/public/UploadVideoWizard";
+
 
 // Seguridad
 import Users from "./pages/security/Users";
@@ -110,6 +112,12 @@ const router = createBrowserRouter([
        element: (
             <Profile />
         ), 
+      },
+      {
+        path: "videos/subir",
+        element: (
+          <UploadVideoWizard />
+        ),
       },
     ],
   },

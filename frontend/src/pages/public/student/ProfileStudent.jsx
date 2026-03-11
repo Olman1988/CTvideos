@@ -42,25 +42,48 @@ const results = useQueries({
     },
   ], 
 });
+const updateLocalUser = (type, value) => {
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+
+  if (!storedUser?.perfiles?.estudiante) return;
+
+  if (type === "avatar") {
+    storedUser.perfiles.estudiante.avatar = value;
+  }
+
+  if (type === "marco") {
+    storedUser.perfiles.estudiante.marco = value;
+  }
+
+  localStorage.setItem("user", JSON.stringify(storedUser));
+};
 const updateAvatar = async (avatar_uuid) => {
   try {
     setSelectedAvatar(avatar_uuid);
+
+    const avatar = avatars.find(a => a.uuid === avatar_uuid);
 
     await axiosInstance.post(`/profiles/${uuid}/avatar`, {
       avatar_uuid
     });
 
+    updateLocalUser("avatar", avatar);
+
   } catch (err) {
     console.error(err);
   }
-};
+}; 
 const updateFrame = async (frame_uuid) => {
   try {
     setSelectedFrame(frame_uuid);
 
+    const frame = frames.find(f => f.uuid === frame_uuid);
+
     await axiosInstance.post(`/profiles/${uuid}/frame`, {
       frame_uuid
     });
+
+    updateLocalUser("marco", frame);
 
   } catch (err) {
     console.error(err);
