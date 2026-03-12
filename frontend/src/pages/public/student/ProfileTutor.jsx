@@ -304,7 +304,7 @@ if (isLoading) {
 )}
 </div>
                 <div className="profile-videos-link">
-                    <Link to="/videos/subir">Subir video</Link>
+                    <Link to="/usuarios/videos/subir">Subir video</Link>
                 </div>
                 </section>
                 {/* MIS LISTAS */}

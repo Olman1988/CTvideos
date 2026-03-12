@@ -10,7 +10,8 @@ const initialState = {
   visibilidad: "publico",
   notificarCentro: true,
   permitirComentarios: true,
-  destacarPerfil: false
+  destacarPerfil: false,
+  students: []
 };
 
 const videoUploadSlice = createSlice({
@@ -61,6 +62,9 @@ const videoUploadSlice = createSlice({
     toggleDestacarPerfil: (state) => {
       state.destacarPerfil = !state.destacarPerfil;
     },
+    setEstudiantes: (state, action) => {
+      state.students = action.payload; // <--- nuevo reducer
+    },
 
     resetVideo: () => initialState
   }
@@ -78,6 +82,7 @@ export const {
   toggleNotificarCentro,
   togglePermitirComentarios,
   toggleDestacarPerfil,
+  setEstudiantes,
   resetVideo
 } = videoUploadSlice.actions;
 
